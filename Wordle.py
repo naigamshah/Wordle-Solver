@@ -49,9 +49,12 @@ class Wordle():
             Runtime: O(k)
         """
         if len(guess) != len(target):
-            raise ValueError(
-                "size of the guess({}) does not equal to the size of the target({})".format(
-                    len(guess), len(target)))
+            print("size of the guess({}) does not equal to the size of the target({})".format(len(guess), len(target)))
+            return 
+
+        if guess not in self.words:
+            print("Not a valid guess")
+            return
 
         target_dict = _bucket_count(target)
 

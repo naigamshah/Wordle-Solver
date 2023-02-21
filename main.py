@@ -3,30 +3,26 @@ import numpy as np
 from utility import _bucket_count, _get_output_path
 
 
-def get_words(size="small"):
+def get_words(mode="easy", k=5):
     """
         small word list: 2315
         extra word list: 12972
     """
-    if size not in ("small", "large"):
-        raise ValueError("choose from size 'small' / 'large")
+    if k not in [3,4,5,6,7,8,9,10]:
+        raise ValueError("choose from size [3,4,5,6,7,8,9,10]")
+
+    if mode not in ["hard","easy"]:
+        raise ValueError("choose from mode [hard, easy]")
+
+    file = f"words/{mode}_words_{k}.txt"
 
     words = []
-    with open("data/small.txt") as f:
+    with open(file) as f:
         for line in f.readlines():
             word = line.strip()
             words.append(word)
 
-    if size == "small":
-        return words
-    elif size == "large":
-        word_set = set(words)
-        with open("data/large.txt") as f:
-            for line in f.readlines():
-                extra_word = line.strip()
-                if extra_word not in word_set:
-                    words.append(extra_word)
-        return words
+    return words
 
 
 def interactive_play(wordle, player, with_target, first_guess=None):
@@ -183,19 +179,19 @@ if __name__ == "__main__":
 
     ####################################################
     words_size = "small"
-    wordle = Wordle(5, get_words(words_size))
+    wordle = Wordle(5, get_words())
 
     if args.solver == "heuristic":
         print("\n[Loading the Heuristic Player ({} word list)]\n".format(words_size))
-        player = HeuristicWordlePlayer(wordle, guess_list=get_words(words_size))
+        player = HeuristicWordlePlayer(wordle, guess_list=get_words())
 
     elif args.solver == "small-mig":
         print("\n[Loading the Max Information Gain Player]\n")
-        player = MaxInformationGainWordlePlayer(wordle, guess_list=get_words("small"), precompute="small")
+        player = MaxInformationGainWordlePlayer(wordle, guess_list=get_words(), precompute="small")
 
     elif args.solver == "large-mig":
         print("\n[Loading the Max Information Gain Player (large word list)]\n")
-        player = MaxInformationGainWordlePlayer(wordle, guess_list=get_words("large"), precompute="large")
+        player = MaxInformationGainWordlePlayer(wordle, guess_list=get_words(), precompute="large")
 
     if args.mode == "interactive":
         interactive_play(wordle, player, with_target=args.with_target, first_guess=args.first_guess)
